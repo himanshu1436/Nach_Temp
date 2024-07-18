@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Table,
   TableHeader,
@@ -17,6 +18,7 @@ import {
   CardTitle,
   CardDescription
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface MonthData {
   presented: number;
@@ -55,6 +57,7 @@ const initialYearData = (): YearData => {
 const YearDataTable: React.FC = () => {
   const [yearData, setYearData] = useState<YearData>(initialYearData());
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,6 +96,10 @@ const YearDataTable: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleMonthClick = (month: string) => {
+    router.push(`/month-detail?month=${encodeURIComponent(month)}`);
+  };
+
   return (
     <div className="relative">
       <Card className="mb-16">
@@ -116,7 +123,14 @@ const YearDataTable: React.FC = () => {
             <TableBody>
               {generateLast12Months().map((month) => (
                 <TableRow key={month}>
-                  <TableCell>{month}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="link"
+                      onClick={() => handleMonthClick(month)}
+                    >
+                      {month}
+                    </Button>
+                  </TableCell>
                   <TableCell>{yearData[month].presented}</TableCell>
                   <TableCell>{yearData[month].captured}</TableCell>
                   <TableCell>{yearData[month].failed}</TableCell>
