@@ -1,132 +1,92 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 
-interface Customer {
-  customer_id: string;
-  method: string;
-  payment_capture: string;
-  auth_type: string;
-  max_amount: string;
-  expire_at: string;
-  beneficiary_name: string;
-  account_number: string;
-  account_type: string;
+interface CustomerData {
+  provider_type: string;
+  current_status: string;
+  person_name: string;
   ifsc_code: string;
+  loan_initiated: number;
+  customer_id: string;
+  account_number: string;
+  email: string;
+  auth_type: string;
+  bank_name: number;
+  method: string;
+  proposed_payment_date: string;
+  emi_amount: number;
+  mobile_num: string;
   receipt: string;
-  date_of_presentation: string;
-  status_after_presentation: string;
+  start_date: Record<string, never>;
+  debit_type: number;
+  year: string;
+  amount: number;
+  payment_capture: string;
+  account_type: number;
+  description: string;
+  nach_provider: string;
+  loan_id: number;
 }
 
-let totalAmnt = 0;
-let failCont = 0;
-
 const PreviousMonth: React.FC = () => {
-  const [customerData, setCustomerData] = useState<Customer[]>([]);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [failCount, setFailCount] = useState(0);
+  const [customerData, setCustomerData] = useState<CustomerData[]>([]);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [failCount, setFailCount] = useState<number>(0);
+
+  const [sucessfullAmount, setSucessfullAmount] = useState<number>(0);
+  const [sucessfullCount, setSucessfullCount] = useState<number>(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const today = new Date();
-        const currentMonth = today.getMonth();
+    async function fetchData() {
+      const res = await fetch('https://borrow-uat.wizr.in/nach/fetch-data');
 
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API}/fetch-data`
-        );
-        const data: Customer[] = await response.json();
+      const data: CustomerData[] = await res.json();
+      setCustomerData(data);
 
-        const lastMonth = new Date(
-          today.getFullYear(),
-          today.getMonth() - 1,
-          1
-        );
+      let previousMonth: number = new Date().getMonth();
+      previousMonth = 12;
 
-        const filteredData = data.filter((customer) => {
-          const presentationDate = new Date(customer.date_of_presentation);
-          return (
-            presentationDate >= lastMonth &&
-            presentationDate.getMonth() === currentMonth - 1
-          );
-        });
+      let total: number = 0;
+      let sTotal: number = 0;
+      let sCount: number = 0;
 
-        const total = filteredData.reduce((acc, curr) => {
-          const amount = parseFloat(curr.max_amount);
-          return !isNaN(amount) ? acc + amount : acc;
-        }, 0);
+      data.forEach((ele, index) => {
+        const eleMonth = new Date(ele.proposed_payment_date).getMonth() + 1;
 
-        const failCount = filteredData.filter(
-          (customer) => customer.status_after_presentation === 'fail'
-        ).length;
-
-        setCustomerData(filteredData);
-        setTotalAmount(total);
-        setFailCount(failCount);
-
-        totalAmnt = total;
-        failCont = failCount;
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+        if (eleMonth == previousMonth) {
+          total += ele.emi_amount;
+          if (ele.current_status == 'captured') {
+            sTotal += ele.emi_amount;
+            sCount++;
+          }
+        }
+      });
+      setTotalAmount(total);
+      setSucessfullAmount(sTotal);
+      setSucessfullCount(sCount);
+    }
 
     fetchData();
   }, []);
 
   return (
-    <div className="customer-table-container">
-      <h1>Previous Month&apos;s Customers (NACH Presented)</h1>
-      {customerData.length > 0 ? (
-        <>
-          <table className="customer-table">
-            <thead>
-              <tr>
-                <th>Customer ID</th>
-                <th>Method</th>
-                <th>Payment Capture</th>
-                <th>Auth Type</th>
-                <th>Max Amount</th>
-                <th>Expire At</th>
-                <th>Beneficiary Name</th>
-                <th>Account Number</th>
-                <th>Account Type</th>
-                <th>IFSC Code</th>
-                <th>Receipt</th>
-                <th>Date of Presentation</th>
-                <th>Status After Presentation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customerData.map((customer) => (
-                <tr key={customer.customer_id}>
-                  <td>{customer.customer_id}</td>
-                  <td>{customer.method}</td>
-                  <td>{customer.payment_capture}</td>
-                  <td>{customer.auth_type}</td>
-                  <td>{customer.max_amount}</td>
-                  <td>{customer.expire_at}</td>
-                  <td>{customer.beneficiary_name}</td>
-                  <td>{customer.account_number}</td>
-                  <td>{customer.account_type}</td>
-                  <td>{customer.ifsc_code}</td>
-                  <td>{customer.receipt}</td>
-                  <td>{customer.date_of_presentation}</td>
-                  <td>{customer.status_after_presentation}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="total-amount">
-            <p>Total Amount: {totalAmount.toFixed(2)}</p>
-          </div>
-          <div className="fail-count">
-            <p>Number of Failed Entries: {failCount}</p>
-          </div>
-        </>
-      ) : (
-        <p>No customers presented NACH in the previous month.</p>
-      )}
+    <div className="w-full mx-auto">
+      <h1 className="text-lg font-bold mb-4">Prev Month's NACH Details</h1>
+
+      <div className="mt-4 flex flex-col space-y-4">
+        <div>
+          <p className="text-sm">Total Amount: ₹{totalAmount.toFixed(2)}</p>
+        </div>
+        <div className="flex space-x-4 justify-between">
+          <p className="text-sm">
+            Successful Amount: ₹{sucessfullAmount.toFixed(2)}
+          </p>
+          <p className="text-sm">Successful Count: {sucessfullCount}</p>
+        </div>
+      </div>
     </div>
   );
 };
 
-export { PreviousMonth, totalAmnt, failCont };
+export { PreviousMonth };

@@ -1,7 +1,6 @@
-// app/components/LoanTable.tsx
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Table,
   TableHeader,
@@ -16,8 +15,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardFooter
+  CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -35,80 +33,75 @@ export function LoanTable({
   itemsPerPage = 5
 }: LoanTableProps) {
   const [offset, setOffset] = useState(initialOffset);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const totalItems = tableData.length;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
 
-  const sortedData = useMemo(() => {
-    const sorted = [...tableData].sort((a, b) => {
-      if (sortOrder === 'asc') {
-        return a.Outstanding_amount - b.Outstanding_amount;
-      } else {
-        return b.Outstanding_amount - a.Outstanding_amount;
-      }
-    });
-    return sorted;
-  }, [sortOrder]);
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerWidth(containerRef.current.offsetWidth);
+    }
+  }, []);
 
   const prevPage = () => setOffset(Math.max(0, offset - itemsPerPage));
   const nextPage = () =>
     setOffset(Math.min(totalItems - itemsPerPage, offset + itemsPerPage));
 
-  const toggleSortOrder = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-  };
-
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-between">
+    <div className="relative" ref={containerRef}>
+      <Card className="mb-16">
+        <CardHeader>
           <CardTitle>Loan Data</CardTitle>
-          <Button onClick={toggleSortOrder}>
-            Sorting {sortOrder === 'asc' ? '↑' : '↓'}
-          </Button>
-        </div>
-        <CardDescription>
-          Overview of bank loans and their details.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableCaption>A list of bank loans and their details</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Bank/FI Name</TableHead>
-              <TableHead>Type of Loan</TableHead>
-              <TableHead>Disbursement Date</TableHead>
-              <TableHead>Outstanding Amount</TableHead>
-              <TableHead>Principal Amount</TableHead>
-              <TableHead>Interest Amount</TableHead>
-              <TableHead>TDS Amount</TableHead>
-              <TableHead>Net Payment</TableHead>
-              <TableHead>Repayment Date</TableHead>
-              <TableHead>NACH/NEFT</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedData
-              .slice(offset, offset + itemsPerPage)
-              .map((loan: Loan, index: number) => (
-                <LoanEntry key={index} loan={loan} />
-              ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <div>
-          Showing {Math.min(offset + 1, totalItems)}-
-          {Math.min(offset + itemsPerPage, totalItems)} of {totalItems} entries
-        </div>
+          <CardDescription>
+            Overview of bank loans and their details.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <Table>
+            <TableCaption>A list of bank loans and their details</TableCaption>
+            <TableHeader>
+              <TableRow>
+                {[
+                  'Bank/FI Name',
+                  'Type of Loan',
+                  'Disbursement Date',
+                  'Outstanding amount',
+                  'Principal Amount',
+                  'Interest Amount',
+                  'TDS Amount',
+                  'Net Payment',
+                  'Repayment Date',
+                  'NACH/NEFT'
+                ].map((field) => (
+                  <TableHead key={field} className="font-bold">
+                    {field}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tableData
+                .slice(offset, offset + itemsPerPage)
+                .map((loan: Loan, index: number) => (
+                  <LoanEntry key={index} loan={loan} />
+                ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      <div
+        className="absolute bottom-0 left-0 right-0 bg-white p-4 shadow-md flex justify-between items-center"
+        style={{ width: `${containerWidth}px` }}
+      >
         <div>
           <Button
             variant="outline"
             size="sm"
             onClick={prevPage}
             disabled={offset === 0}
+            className="mr-2"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 mr-1" />
             Prev
           </Button>
           <Button
@@ -118,10 +111,14 @@ export function LoanTable({
             disabled={offset + itemsPerPage >= totalItems}
           >
             Next
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
-      </CardFooter>
-    </Card>
+        <div className="text-center">
+          Showing {Math.min(offset + 1, totalItems)}-
+          {Math.min(offset + itemsPerPage, totalItems)} of {totalItems} entries
+        </div>
+      </div>
+    </div>
   );
 }

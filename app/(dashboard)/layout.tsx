@@ -10,14 +10,6 @@ import {
   Users2
 } from 'lucide-react';
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
@@ -31,7 +23,7 @@ import { VercelLogo } from '@/components/icons';
 import Providers from './providers';
 import { NavItem } from './nav-item';
 import { SearchInput } from './search';
-
+import { DynamicBreadcrumb } from '@/components/ui/DynamicBreadCrumb';
 export default function DashboardLayout({
   children
 }: {
@@ -44,7 +36,7 @@ export default function DashboardLayout({
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <MobileNav />
-            <DashboardBreadcrumb />
+            <DynamicBreadcrumb />
             <SearchInput />
             <User />
           </header>
@@ -71,10 +63,6 @@ function DesktopNav() {
           <span className="sr-only">Acme Inc</span>
         </Link>
 
-        {/* <NavItem href="/nachpresented" label="Home">
-          <Home className="h-5 w-5" />
-        </NavItem> */}
-
         <NavItem href="/" label="Home">
           <Home className="h-5 w-5" />
         </NavItem>
@@ -82,14 +70,6 @@ function DesktopNav() {
         <NavItem href="/todaysnach" label="Today's Nach">
           <ShoppingCart className="h-5 w-5" />
         </NavItem>
-
-        {/* <NavItem href="/" label="All Nach">
-          <Package className="h-5 w-5" />
-        </NavItem> */}
-
-        {/* <NavItem href="/customers" label="Nach Prsented">
-          <Users2 className="h-5 w-5" />
-        </NavItem> */}
 
         <NavItem href="/allnach" label="Analytics">
           <LineChart className="h-5 w-5" />
@@ -132,66 +112,28 @@ function MobileNav() {
             <span className="sr-only">Vercel</span>
           </Link>
           <Link
-            href="#"
+            href="/"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <Home className="h-5 w-5" />
             Dashboard
           </Link>
           <Link
-            href="#"
+            href="/todaysnach"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <ShoppingCart className="h-5 w-5" />
-            Orders
+            Today's Nach
           </Link>
           <Link
-            href="#"
+            href="/allnach"
             className="flex items-center gap-4 px-2.5 text-foreground"
           >
-            <Package className="h-5 w-5" />
-            Products
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-          >
-            <Users2 className="h-5 w-5" />
-            Customers
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-          >
             <LineChart className="h-5 w-5" />
-            Settings
+            Analytics
           </Link>
         </nav>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function DashboardBreadcrumb() {
-  return (
-    <Breadcrumb className="hidden md:flex">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="#">Dashboard</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="#">Products</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>All Products</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
   );
 }
