@@ -110,6 +110,22 @@ const MonthDetail: React.FC = () => {
 
   return (
     <div className="relative w-full max-w-full overflow-hidden">
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+      `}</style>
       <Card className="mb-16">
         <CardHeader>
           <CardTitle>Details for {month}</CardTitle>
@@ -117,7 +133,7 @@ const MonthDetail: React.FC = () => {
             Showing {startIndex + 1}-{endIndex} of {monthData.length} entries
           </CardDescription>
         </CardHeader>
-        <CardContent className="overflow-auto max-h-[70vh]">
+        <CardContent className="overflow-auto max-h-[70vh] custom-scrollbar">
           <div className="w-max min-w-full">
             <Table>
               <TableCaption>Month Detail Data</TableCaption>
