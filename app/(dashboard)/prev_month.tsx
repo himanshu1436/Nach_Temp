@@ -39,13 +39,14 @@ const PreviousMonth: React.FC = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch('https://borrow-uat.wizr.in/nach/fetch-data');
+      const res = await fetch(
+        'https://borrow-uat.wizr.in/nach/fetch-previous-month-data'
+      );
 
       const data: CustomerData[] = await res.json();
       setCustomerData(data);
 
       let previousMonth: number = new Date().getMonth();
-      previousMonth = 12;
 
       let total: number = 0;
       let sTotal: number = 0;
@@ -54,12 +55,10 @@ const PreviousMonth: React.FC = () => {
       data.forEach((ele, index) => {
         const eleMonth = new Date(ele.proposed_payment_date).getMonth() + 1;
 
-        if (eleMonth == previousMonth) {
-          total += ele.emi_amount;
-          if (ele.current_status == 'captured') {
-            sTotal += ele.emi_amount;
-            sCount++;
-          }
+        total += ele.emi_amount;
+        if (ele.current_status == 'captured') {
+          sTotal += ele.emi_amount;
+          sCount++;
         }
       });
       setTotalAmount(total);

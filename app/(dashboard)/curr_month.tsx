@@ -39,13 +39,15 @@ const CurrentMonth: React.FC = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch('https://borrow-uat.wizr.in/nach/fetch-data');
+      const res = await fetch(
+        'https://borrow-uat.wizr.in/nach/fetch-current-month-data'
+      );
 
       const data: CustomerData[] = await res.json();
       setCustomerData(data);
+      console.log(data);
 
       let currentMonth: number = new Date().getMonth() + 1;
-      currentMonth = 1;
 
       let total: number = 0;
       let sTotal: number = 0;
@@ -54,12 +56,10 @@ const CurrentMonth: React.FC = () => {
       data.forEach((ele, index) => {
         const eleMonth = new Date(ele.proposed_payment_date).getMonth() + 1;
 
-        if (eleMonth == currentMonth) {
-          total += ele.emi_amount;
-          if (ele.current_status == 'captured') {
-            sTotal += ele.emi_amount;
-            sCount++;
-          }
+        total += ele.emi_amount;
+        if (ele.current_status == 'captured') {
+          sTotal += ele.emi_amount;
+          sCount++;
         }
       });
       setTotalAmount(total);
