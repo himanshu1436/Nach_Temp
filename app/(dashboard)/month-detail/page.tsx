@@ -109,7 +109,7 @@ const MonthDetail: React.FC = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-w-full overflow-hidden">
       <Card className="mb-16">
         <CardHeader>
           <CardTitle>Details for {month}</CardTitle>
@@ -117,62 +117,68 @@ const MonthDetail: React.FC = () => {
             Showing {startIndex + 1}-{endIndex} of {monthData.length} entries
           </CardDescription>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <Table>
-            <TableCaption>Month Detail Data</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="font-bold">Current Status</TableHead>
-                <TableHead className="font-bold">Person Name</TableHead>
-                <TableHead className="font-bold">IFSC Code</TableHead>
-                <TableHead className="font-bold">Loan Initiated</TableHead>
-                <TableHead className="font-bold">Customer ID</TableHead>
-                <TableHead className="font-bold">Account Number</TableHead>
-                <TableHead className="font-bold">Email</TableHead>
-                <TableHead className="font-bold">Auth Type</TableHead>
-                <TableHead className="font-bold">Method</TableHead>
-                <TableHead className="font-bold">
-                  Proposed Payment Date
-                </TableHead>
-                <TableHead className="font-bold">EMI Amount</TableHead>
-                <TableHead className="font-bold">Mobile Number</TableHead>
-                <TableHead className="font-bold">Receipt</TableHead>
-                <TableHead className="font-bold">Debit Type</TableHead>
-                <TableHead className="font-bold">Amount</TableHead>
-                <TableHead className="font-bold">Payment Capture</TableHead>
-                <TableHead className="font-bold">Account Type</TableHead>
-                <TableHead className="font-bold">Description</TableHead>
-                <TableHead className="font-bold">NACH Provider</TableHead>
-                <TableHead className="font-bold">Loan ID</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentEntries.map((entry, index) => (
-                <TableRow key={index}>
-                  <TableCell>{entry.current_status}</TableCell>
-                  <TableCell>{entry.person_name}</TableCell>
-                  <TableCell>{entry.ifsc_code}</TableCell>
-                  <TableCell>{entry.loan_initiated}</TableCell>
-                  <TableCell>{entry.customer_id}</TableCell>
-                  <TableCell>{entry.account_number}</TableCell>
-                  <TableCell>{entry.email}</TableCell>
-                  <TableCell>{entry.auth_type}</TableCell>
-                  <TableCell>{entry.method}</TableCell>
-                  <TableCell>{entry.proposed_payment_date}</TableCell>
-                  <TableCell>{entry.emi_amount}</TableCell>
-                  <TableCell>{entry.mobile_num}</TableCell>
-                  <TableCell>{entry.receipt}</TableCell>
-                  <TableCell>{entry.debit_type}</TableCell>
-                  <TableCell>{entry.amount}</TableCell>
-                  <TableCell>{entry.payment_capture}</TableCell>
-                  <TableCell>{entry.account_type}</TableCell>
-                  <TableCell>{entry.description}</TableCell>
-                  <TableCell>{entry.nach_provider}</TableCell>
-                  <TableCell>{entry.loan_id}</TableCell>
+        <CardContent className="overflow-auto max-h-[70vh]">
+          <div className="w-max min-w-full">
+            <Table>
+              <TableCaption>Month Detail Data</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-bold sticky left-0 bg-white z-10">
+                    Current Status
+                  </TableHead>
+                  <TableHead className="font-bold">Person Name</TableHead>
+                  <TableHead className="font-bold">IFSC Code</TableHead>
+                  <TableHead className="font-bold">Loan Initiated</TableHead>
+                  <TableHead className="font-bold">Customer ID</TableHead>
+                  <TableHead className="font-bold">Account Number</TableHead>
+                  <TableHead className="font-bold">Email</TableHead>
+                  <TableHead className="font-bold">Auth Type</TableHead>
+                  <TableHead className="font-bold">Method</TableHead>
+                  <TableHead className="font-bold">
+                    Proposed Payment Date
+                  </TableHead>
+                  <TableHead className="font-bold">EMI Amount</TableHead>
+                  <TableHead className="font-bold">Mobile Number</TableHead>
+                  <TableHead className="font-bold">Receipt</TableHead>
+                  <TableHead className="font-bold">Debit Type</TableHead>
+                  <TableHead className="font-bold">Amount</TableHead>
+                  <TableHead className="font-bold">Payment Capture</TableHead>
+                  <TableHead className="font-bold">Account Type</TableHead>
+                  <TableHead className="font-bold">Description</TableHead>
+                  <TableHead className="font-bold">NACH Provider</TableHead>
+                  <TableHead className="font-bold">Loan ID</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {currentEntries.map((entry, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="sticky left-0 bg-white z-10">
+                      {entry.current_status}
+                    </TableCell>
+                    <TableCell>{entry.person_name}</TableCell>
+                    <TableCell>{entry.ifsc_code}</TableCell>
+                    <TableCell>{entry.loan_initiated}</TableCell>
+                    <TableCell>{entry.customer_id}</TableCell>
+                    <TableCell>{entry.account_number}</TableCell>
+                    <TableCell>{entry.email}</TableCell>
+                    <TableCell>{entry.auth_type}</TableCell>
+                    <TableCell>{entry.method}</TableCell>
+                    <TableCell>{entry.proposed_payment_date}</TableCell>
+                    <TableCell>{entry.emi_amount}</TableCell>
+                    <TableCell>{entry.mobile_num}</TableCell>
+                    <TableCell>{entry.receipt}</TableCell>
+                    <TableCell>{entry.debit_type}</TableCell>
+                    <TableCell>{entry.amount}</TableCell>
+                    <TableCell>{entry.payment_capture}</TableCell>
+                    <TableCell>{entry.account_type}</TableCell>
+                    <TableCell>{entry.description}</TableCell>
+                    <TableCell>{entry.nach_provider}</TableCell>
+                    <TableCell>{entry.loan_id}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
       <div className="flex justify-center mt-4">
