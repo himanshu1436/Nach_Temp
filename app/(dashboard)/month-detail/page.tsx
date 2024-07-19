@@ -139,7 +139,8 @@ const MonthDetail: React.FC = () => {
               <TableCaption>Month Detail Data</TableCaption>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="font-bold sticky left-0 bg-white z-10">
+                  <TableHead className="font-bold">Loan ID</TableHead>
+                  <TableHead className="font-bold sticky">
                     Current Status
                   </TableHead>
                   <TableHead className="font-bold">Person Name</TableHead>
@@ -162,15 +163,13 @@ const MonthDetail: React.FC = () => {
                   <TableHead className="font-bold">Account Type</TableHead>
                   <TableHead className="font-bold">Description</TableHead>
                   <TableHead className="font-bold">NACH Provider</TableHead>
-                  <TableHead className="font-bold">Loan ID</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {currentEntries.map((entry, index) => (
                   <TableRow key={index}>
-                    <TableCell className="sticky left-0 bg-white z-10">
-                      {entry.current_status}
-                    </TableCell>
+                    <TableCell>{entry.loan_id}</TableCell>
+                    <TableCell>{entry.current_status}</TableCell>
                     <TableCell>{entry.person_name}</TableCell>
                     <TableCell>{entry.ifsc_code}</TableCell>
                     <TableCell>{entry.loan_initiated}</TableCell>
@@ -189,7 +188,6 @@ const MonthDetail: React.FC = () => {
                     <TableCell>{entry.account_type}</TableCell>
                     <TableCell>{entry.description}</TableCell>
                     <TableCell>{entry.nach_provider}</TableCell>
-                    <TableCell>{entry.loan_id}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
