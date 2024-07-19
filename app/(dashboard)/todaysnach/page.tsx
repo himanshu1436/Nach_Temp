@@ -1,169 +1,218 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption
+} from '@/components/ui/table';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-interface CustomerData {
-  customer_id: string;
-  method: string;
-  payment_capture: string;
-  auth_type: string;
-  max_amount: number;
-  expire_at: string;
-  beneficiary_name: string;
-  account_number: string;
-  account_type: string;
+interface EntryData {
+  current_status: string;
+  person_name: string;
   ifsc_code: string;
+  loan_initiated: number;
+  customer_id: string;
+  account_number: string;
+  email: string;
+  auth_type: string;
+  method: string;
+  proposed_payment_date: string;
+  emi_amount: number;
+  mobile_num: string;
   receipt: string;
-  date_of_presentation: string;
-  status_after_presentation: string;
-  isChecked: boolean;
+  start_date: any;
+  debit_type: number;
+  amount: number;
+  payment_capture: string;
+  account_type: number;
+  description: string;
+  nach_provider: string;
+  loan_id: number;
 }
 
+const ENTRIES_PER_PAGE = 100;
+
 const TodaysNach: React.FC = () => {
-  const [customerData, setCustomerData] = useState<CustomerData[]>([]);
-  const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [monthData, setMonthData] = useState<EntryData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
-      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API}/fetch-data`);
-      const data: CustomerData[] = await response.json();
+      try {
+        const response = await fetch(
+          'https://borrow-uat.wizr.in/nach/fetch-data'
+        );
+        const data = await response.json();
 
-      const filteredData = data.filter((customer) => {
-        const presentationDate = customer.date_of_presentation.split('T')[0];
-        return presentationDate === today;
-      });
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
 
-      setCustomerData(
-        filteredData.map((customer) => ({ ...customer, isChecked: false }))
-      );
+        const filteredData = data.filter((item: EntryData) => {
+          const itemDate = new Date(item.proposed_payment_date);
+          return (
+            itemDate.getMonth() === 0 && itemDate.getFullYear() === currentYear
+          );
+        });
+
+        setMonthData(filteredData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setIsLoading(false);
+      }
     };
 
     fetchData();
   }, []);
 
-  const handleCheckboxChange = (index: number) => {
-    const updatedData = [...customerData];
-    updatedData[index].isChecked = !updatedData[index].isChecked;
+  const totalPages = Math.ceil(monthData.length / ENTRIES_PER_PAGE);
+  const startIndex = (currentPage - 1) * ENTRIES_PER_PAGE;
+  const endIndex = Math.min(startIndex + ENTRIES_PER_PAGE, monthData.length);
+  const currentEntries = monthData.slice(startIndex, endIndex);
 
-    const allChecked = updatedData.every((customer) => customer.isChecked);
-    setSelectAll(allChecked);
-
-    setCustomerData(updatedData);
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
-  const handleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    setCustomerData(
-      customerData.map((customer) => ({ ...customer, isChecked: newSelectAll }))
-    );
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
-  const handleDeselectAll = () => {
-    setSelectAll(false);
-    setCustomerData(
-      customerData.map((customer) => ({ ...customer, isChecked: false }))
-    );
-  };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  const handlePresentNach = () => {
-    const selectedCustomers = customerData.filter(
-      (customer) => customer.isChecked
-    );
-    console.log('Present NACH for selected customers:', selectedCustomers);
-  };
+  if (monthData.length === 0) {
+    return <div>No entries for this Month.</div>;
+  }
 
-  const isPresentNachDisabled = customerData.every(
-    (customer) => !customer.isChecked
-  );
+  const currentMonth = new Date().toLocaleString('default', {
+    month: 'long',
+    year: 'numeric'
+  });
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Today's NACH Details</h1>
-      <div className="flex space-x-2 mb-4">
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-          disabled={customerData.length === 0}
-          onClick={handleSelectAll}
-        >
-          Select All
-        </button>
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-          disabled={customerData.length === 0}
-          onClick={handleDeselectAll}
-        >
-          Deselect All
-        </button>
-        <button
-          className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
-          disabled={isPresentNachDisabled}
-          onClick={handlePresentNach}
-        >
-          Present NACH
-        </button>
-      </div>
-      {customerData.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2">
-                  <input
-                    type="checkbox"
-                    checked={selectAll}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                <th className="px-4 py-2">Customer ID</th>
-                <th className="px-4 py-2">Method</th>
-                <th className="px-4 py-2">Payment Capture</th>
-                <th className="px-4 py-2">Auth Type</th>
-                <th className="px-4 py-2">Max Amount</th>
-                <th className="px-4 py-2">Expire At</th>
-                <th className="px-4 py-2">Beneficiary Name</th>
-                <th className="px-4 py-2">Account Number</th>
-                <th className="px-4 py-2">Account Type</th>
-                <th className="px-4 py-2">IFSC Code</th>
-                <th className="px-4 py-2">Receipt</th>
-                <th className="px-4 py-2">Date of Presentation</th>
-                <th className="px-4 py-2">Status After Presentation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customerData.map((customer, index) => (
-                <tr key={customer.customer_id} className="border-b">
-                  <td className="px-4 py-2">
-                    <input
-                      type="checkbox"
-                      checked={customer.isChecked}
-                      onChange={() => handleCheckboxChange(index)}
-                    />
-                  </td>
-                  <td className="px-4 py-2">{customer.customer_id}</td>
-                  <td className="px-4 py-2">{customer.method}</td>
-                  <td className="px-4 py-2">{customer.payment_capture}</td>
-                  <td className="px-4 py-2">{customer.auth_type}</td>
-                  <td className="px-4 py-2">{customer.max_amount}</td>
-                  <td className="px-4 py-2">{customer.expire_at}</td>
-                  <td className="px-4 py-2">{customer.beneficiary_name}</td>
-                  <td className="px-4 py-2">{customer.account_number}</td>
-                  <td className="px-4 py-2">{customer.account_type}</td>
-                  <td className="px-4 py-2">{customer.ifsc_code}</td>
-                  <td className="px-4 py-2">{customer.receipt}</td>
-                  <td className="px-4 py-2">{customer.date_of_presentation}</td>
-                  <td className="px-4 py-2">
-                    {customer.status_after_presentation}
-                  </td>
-                </tr>
+    <div className="container mx-auto px-2 py-4">
+      <h1 className="text-xl font-bold mb-2">Today's NACH Details</h1>
+      <Card className="mb-8">
+        <CardHeader className="py-2">
+          <CardTitle className="text-lg">Details for {currentMonth}</CardTitle>
+          <CardDescription className="text-sm">
+            Showing {startIndex + 1}-{endIndex} of {monthData.length} entries
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="overflow-x-auto p-2">
+          <Table className="w-full text-xs">
+            <TableCaption>Month Detail Data</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold p-1">
+                  Current Status
+                </TableHead>
+                <TableHead className="font-semibold p-1">Person Name</TableHead>
+                <TableHead className="font-semibold p-1">IFSC Code</TableHead>
+                <TableHead className="font-semibold p-1">
+                  Loan Initiated
+                </TableHead>
+                <TableHead className="font-semibold p-1">Customer ID</TableHead>
+                <TableHead className="font-semibold p-1">
+                  Account Number
+                </TableHead>
+                <TableHead className="font-semibold p-1">Email</TableHead>
+                <TableHead className="font-semibold p-1">Auth Type</TableHead>
+                <TableHead className="font-semibold p-1">Method</TableHead>
+                <TableHead className="font-semibold p-1">
+                  Proposed Payment Date
+                </TableHead>
+                <TableHead className="font-semibold p-1">EMI Amount</TableHead>
+                <TableHead className="font-semibold p-1">
+                  Mobile Number
+                </TableHead>
+                <TableHead className="font-semibold p-1">Receipt</TableHead>
+                <TableHead className="font-semibold p-1">Debit Type</TableHead>
+                <TableHead className="font-semibold p-1">Amount</TableHead>
+                <TableHead className="font-semibold p-1">
+                  Payment Capture
+                </TableHead>
+                <TableHead className="font-semibold p-1">
+                  Account Type
+                </TableHead>
+                <TableHead className="font-semibold p-1">Description</TableHead>
+                <TableHead className="font-semibold p-1">
+                  NACH Provider
+                </TableHead>
+                <TableHead className="font-semibold p-1">Loan ID</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentEntries.map((entry, index) => (
+                <TableRow key={index}>
+                  <TableCell className="p-1">{entry.current_status}</TableCell>
+                  <TableCell className="p-1">{entry.person_name}</TableCell>
+                  <TableCell className="p-1">{entry.ifsc_code}</TableCell>
+                  <TableCell className="p-1">{entry.loan_initiated}</TableCell>
+                  <TableCell className="p-1">{entry.customer_id}</TableCell>
+                  <TableCell className="p-1">{entry.account_number}</TableCell>
+                  <TableCell className="p-1">{entry.email}</TableCell>
+                  <TableCell className="p-1">{entry.auth_type}</TableCell>
+                  <TableCell className="p-1">{entry.method}</TableCell>
+                  <TableCell className="p-1">
+                    {entry.proposed_payment_date}
+                  </TableCell>
+                  <TableCell className="p-1">{entry.emi_amount}</TableCell>
+                  <TableCell className="p-1">{entry.mobile_num}</TableCell>
+                  <TableCell className="p-1">{entry.receipt}</TableCell>
+                  <TableCell className="p-1">{entry.debit_type}</TableCell>
+                  <TableCell className="p-1">{entry.amount}</TableCell>
+                  <TableCell className="p-1">{entry.payment_capture}</TableCell>
+                  <TableCell className="p-1">{entry.account_type}</TableCell>
+                  <TableCell className="p-1">{entry.description}</TableCell>
+                  <TableCell className="p-1">{entry.nach_provider}</TableCell>
+                  <TableCell className="p-1">{entry.loan_id}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p className="text-sm">No customers presented NACH today.</p>
-      )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      <div className="flex justify-center mt-2">
+        <Button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className="text-sm px-2 py-1"
+        >
+          &lt;
+        </Button>
+        <span className="mx-2 text-sm">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          onClick={nextPage}
+          disabled={currentPage === totalPages}
+          className="text-sm px-2 py-1"
+        >
+          &gt;
+        </Button>
+      </div>
     </div>
   );
 };

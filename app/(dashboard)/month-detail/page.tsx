@@ -10,7 +10,7 @@ import {
   TableRow,
   TableCell,
   TableCaption
-} from '@/components/ui/table';
+} from '@/components/ui/monthlyTable';
 import {
   Card,
   CardContent,
