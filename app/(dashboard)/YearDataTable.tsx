@@ -21,9 +21,9 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface MonthData {
-  presented: number;
   captured: number;
-  failed: number;
+  authorized: number;
+  nan: number;
 }
 
 interface YearData {
@@ -49,7 +49,7 @@ const generateLast12Months = (): string[] => {
 const initialYearData = (): YearData => {
   const data: YearData = {};
   generateLast12Months().forEach((month) => {
-    data[month] = { presented: 0, captured: 0, failed: 0 };
+    data[month] = { captured: 0, authorized: 0, nan: 0 };
   });
   return data;
 };
@@ -62,26 +62,21 @@ const YearDataTable: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          'https://borrow-uat.wizr.in/nach/fetch-data'
-        );
+        const response = await fetch('http://localhost:4000/redshift-data');
         const data = await response.json();
 
         const newYearData = initialYearData();
 
         data.forEach((item: any) => {
-          const date = new Date(item.proposed_payment_date);
+          const date = new Date(item.month + '-01');
           const monthYear = date.toLocaleString('default', {
             month: 'long',
             year: 'numeric'
           });
           if (newYearData[monthYear]) {
-            newYearData[monthYear].presented++;
-            if (item.current_status === 'captured') {
-              newYearData[monthYear].captured++;
-            } else if (item.current_status === 'failed') {
-              newYearData[monthYear].failed++;
-            }
+            newYearData[monthYear].captured = item.captured;
+            newYearData[monthYear].authorized = item.authorized;
+            newYearData[monthYear].nan = item.nan;
           }
         });
 
@@ -115,9 +110,11 @@ const YearDataTable: React.FC = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="font-bold">Month</TableHead>
-                <TableHead className="font-bold">Presented</TableHead>
                 <TableHead className="font-bold">Captured</TableHead>
-                <TableHead className="font-bold">Failed</TableHead>
+                <TableHead className="font-bold">Authorized</TableHead>
+                <TableHead className="font-bold">
+                  Failed / Not Presented{' '}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -131,9 +128,9 @@ const YearDataTable: React.FC = () => {
                       {month}
                     </Button>
                   </TableCell>
-                  <TableCell>{yearData[month].presented}</TableCell>
                   <TableCell>{yearData[month].captured}</TableCell>
-                  <TableCell>{yearData[month].failed}</TableCell>
+                  <TableCell>{yearData[month].authorized}</TableCell>
+                  <TableCell>{yearData[month].nan}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
