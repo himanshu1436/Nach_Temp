@@ -1120,7 +1120,8 @@ import {
 import { Button } from '@/components/ui/button2';
 import { Input } from '@/components/ui/input';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-// import { XIcon } from '@heroicons/react/solid'
+
+import { RiCloseCircleLine } from 'react-icons/ri';
 
 interface EntryData {
   current_status: string;
@@ -1822,337 +1823,6 @@ const MonthDetail: React.FC = () => {
     'proposed_payment_date'
   ];
 
-  // return (
-  //   <div className="relative w-full max-w-full overflow-hidden pb-16 animate-fade-in-up">
-  //     <style jsx global>{`
-  //       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
-  //       body {
-  //         font-family: 'Inter', sans-serif;
-  //       }
-  //       .custom-scrollbar::-webkit-scrollbar {
-  //         width: 6px;
-  //         height: 6px;
-  //       }
-  //       .custom-scrollbar::-webkit-scrollbar-track {
-  //         background: #f1f1f1;
-  //       }
-  //       .custom-scrollbar::-webkit-scrollbar-thumb {
-  //         background: #888;
-  //         border-radius: 3px;
-  //       }
-  //       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  //         background: #555;
-  //       }
-
-  //       .react-tabs__tab {
-  //         position: relative;
-  //         padding-bottom: 8px; /* Adjust if needed */
-  //       }
-
-  //       .react-tabs__tab--selected::after {
-  //         content: '';
-  //         position: absolute;
-  //         bottom: 0;
-  //         left: 0;
-  //         width: 100%;
-  //         height: 2px; /* Adjust the thickness of the underline */
-  //         background: blue; /* Change to your desired underline color */
-  //         transition: none; /* Ensure underline doesn't animate or disappear */
-  //       }
-  //     `}</style>
-  //     <Card className="mb-16">
-  //       <CardHeader className="flex flex-col space-y-4">
-  //         {/* Heading and Details Section */}
-  //         <div>
-  //           <CardTitle>Details for {month}</CardTitle>
-  //           <CardDescription>
-  //             {isLoading ? (
-  //               `Loading... (${loadingProgress} items loaded)`
-  //             ) : isSearchActive ? (
-  //               `Showing ${monthData.length} search results`
-  //             ) : (
-  //               <>
-  //                 Showing {getEntryRange()} entries
-  //                 {metadata.totalItems > 0 &&
-  //                   ` (Total: ${metadata.totalItems})`}
-  //               </>
-  //             )}
-  //             {searchMessage && (
-  //               <div className="text-sm text-blue-500 mt-1">
-  //                 {searchMessage}
-  //               </div>
-  //             )}
-  //             {selectedRows.length > 0 && (
-  //               <div className="text-sm text-blue-500 mt-1">
-  //                 {selectedRows.length} row(s) selected
-  //               </div>
-  //             )}
-  //           </CardDescription>
-  //         </div>
-
-  //         {/* Tabs and Actions Section */}
-  //         <div className="flex items-center justify-between">
-  //           <Tabs
-  //             selectedIndex={[
-  //               'Captured',
-  //               'Authorized',
-  //               'Not Presented'
-  //             ].indexOf(selectedStatus || '')}
-  //             onSelect={(index) =>
-  //               handleStatusSelect(
-  //                 ['Captured', 'Authorized', 'Not Presented'][index] || null
-  //               )
-  //             }
-  //             className="flex flex-col"
-  //           >
-  //             <TabList className="flex border-b-0">
-  //               {['Captured', 'Authorized', 'Not Presented'].map(
-  //                 (status, index) => (
-  //                   <Tab
-  //                     key={status}
-  //                     className={`
-  //       px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out
-  //       border-t border-r first:border-l first:rounded-tl-md last:rounded-tr-md
-  //       ${index === 0 ? 'border-l' : ''}
-  //       hover:bg-gray-50 focus:outline-none
-  //       cursor-pointer
-  //        hover:font-semibold
-  //     `}
-  //                     selectedClassName="bg-blue-100 border-b-0 relative z-10 text-blue-600"
-  //                   >
-  //                     {status}
-  //                   </Tab>
-  //                 )
-  //               )}
-  //             </TabList>
-  //           </Tabs>
-
-  //           <div className="flex items-center space-x-2">
-  //             <Button
-  //               onClick={handleCreateOrderAndPayment}
-  //               className="bg-green-500 hover:bg-green-600 text-white transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
-  //               disabled={selectedRows.length !== 1}
-  //             >
-  //               Present
-  //             </Button>
-
-  //             <Button
-  //               onClick={handleReset}
-  //               className="bg-red-500 hover:bg-red-600 text-white transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
-  //               disabled={isLoading || isInitialLoad}
-  //             >
-  //               Reset All
-  //             </Button>
-
-  //             <div className="relative">
-  //               <Input
-  //                 type="text"
-  //                 placeholder="Search by Name/Loan ID"
-  //                 value={searchInput}
-  //                 onChange={(e) => setSearchInput(e.target.value)}
-  //                 className="w-56 pr-8 transition-all duration-200 ease-in-out focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
-  //                 onKeyPress={(e) => {
-  //                   if (e.key === 'Enter') {
-  //                     handleSearch();
-  //                   }
-  //                 }}
-  //                 disabled={isLoading || isInitialLoad}
-  //               />
-  //               <button
-  //                 onClick={handleSearch}
-  //                 className="absolute right-2 top-1/2 transform -translate-y-1/2 transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
-  //                 disabled={isLoading || isInitialLoad}
-  //               >
-  //                 <Search size={18} />
-  //               </button>
-  //             </div>
-
-  //             <Dialog.Root
-  //               open={isFilterModalOpen}
-  //               onOpenChange={setIsFilterModalOpen}
-  //             >
-  //               <Dialog.Trigger asChild>
-  //                 <Button
-  //                   className="transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
-  //                   disabled={isLoading || isInitialLoad}
-  //                 >
-  //                   Filters <Filter size={16} className="ml-2" />
-  //                 </Button>
-  //               </Dialog.Trigger>
-  //               <Dialog.Portal>
-  //                 <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-  //                 <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-lg shadow-xl w-[500px] animate-scale-in">
-  //                   <Dialog.Title className="text-lg font-bold mb-3"></Dialog.Title>
-  //                   <div className="flex space-x-2">
-  //                     <div className="flex-1 border-r pr-2">
-  //                       <h3 className="font-semibold mb-1 text-sm">
-  //                         NACH Provider
-  //                       </h3>
-  //                       <div className="space-y-1">
-  //                         {['Razorpay', 'Axis', 'Salesforce'].map(
-  //                           (provider) => (
-  //                             <button
-  //                               key={provider}
-  //                               onClick={() =>
-  //                                 handleNachProviderChange(provider)
-  //                               }
-  //                               className={`w-full text-left py-1 px-2 text-sm ${
-  //                                 selectedNachProviders.includes(provider)
-  //                                   ? 'font-semibold bg-blue-100'
-  //                                   : 'font-normal'
-  //                               } transition-all duration-200 ease-in-out hover:bg-gray-100 rounded`}
-  //                             >
-  //                               {provider}
-  //                             </button>
-  //                           )
-  //                         )}
-  //                       </div>
-  //                     </div>
-  //                     <div className="flex-1 pl-2">
-  //                       <h3 className="font-semibold mb-1 text-sm">
-  //                         Sort by EMI
-  //                       </h3>
-  //                       <div className="space-y-1">
-  //                         {['Ascending', 'Descending'].map((option) => (
-  //                           <button
-  //                             key={option}
-  //                             onClick={() =>
-  //                               handleSortChange(
-  //                                 option.toLowerCase() as
-  //                                   | 'ascending'
-  //                                   | 'descending'
-  //                               )
-  //                             }
-  //                             className={`w-full text-left py-1 px-2 text-sm ${
-  //                               sortOrder === option.toLowerCase()
-  //                                 ? 'font-semibold bg-blue-100'
-  //                                 : 'font-normal'
-  //                             } transition-all duration-200 ease-in-out hover:bg-gray-100 rounded`}
-  //                           >
-  //                             {option}
-  //                           </button>
-  //                         ))}
-  //                       </div>
-  //                     </div>
-  //                   </div>
-  //                 </Dialog.Content>
-  //               </Dialog.Portal>
-  //             </Dialog.Root>
-  //           </div>
-  //         </div>
-  //       </CardHeader>
-
-  //       <CardContent className="overflow-auto max-h-[70vh] custom-scrollbar">
-  //         <div className="w-max min-w-full">
-  //           <Table>
-  //             <TableCaption>Month Detail Data</TableCaption>
-  //             <TableHeader>
-  //               <TableRow>
-  //                 <TableHead className="font-bold w-10">
-  //                   <input
-  //                     type="checkbox"
-  //                     className="form-checkbox h-5 w-5 mt-1 text-blue-600 transition duration-150 ease-in-out"
-  //                     checked={
-  //                       selectedRows.length > 0 &&
-  //                       selectedRows.length ===
-  //                         monthData.filter(isRowSelectable).length
-  //                     }
-  //                     onChange={handleSelectAllChange}
-  //                   />
-  //                 </TableHead>
-  //                 {fieldsToShow.map((field, index) => (
-  //                   <TableHead key={index} className="font-bold">
-  //                     {field.replace(/_/g, ' ').toUpperCase()}
-  //                   </TableHead>
-  //                 ))}
-  //               </TableRow>
-  //             </TableHeader>
-  //             <TableBody>
-  //               {monthData.map((entry, index) => (
-  //                 <TableRow
-  //                   key={index}
-  //                   className="animate-fade-in-up"
-  //                   style={{ animationDelay: `${index * 50}ms` }}
-  //                 >
-  //                   <TableCell className="w-10">
-  //                     {isRowSelectable(entry) && (
-  //                       <input
-  //                         type="checkbox"
-  //                         className="form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out"
-  //                         checked={selectedRows.includes(entry.loan_id)}
-  //                         onChange={() => handleCheckboxChange(entry.loan_id)}
-  //                       />
-  //                     )}
-  //                   </TableCell>
-  //                   {fieldsToShow.map((field, cellIndex) => {
-  //                     if (field === 'current_status') {
-  //                       const { text, color } = getStatusDisplay(entry[field]);
-  //                       return (
-  //                         <TableCell key={cellIndex} className={color}>
-  //                           {text}
-  //                         </TableCell>
-  //                       );
-  //                     }
-  //                     if (field === 'person_name') {
-  //                       return (
-  //                         <TableCell key={cellIndex} className="text-gray-700">
-  //                           {capitalizeName(entry[field])}
-  //                         </TableCell>
-  //                       );
-  //                     }
-  //                     if (field === 'email') {
-  //                       return (
-  //                         <TableCell key={cellIndex} className="text-gray-700">
-  //                           {toLowerCaseEmail(entry[field])}
-  //                         </TableCell>
-  //                       );
-  //                     }
-  //                     return (
-  //                       <TableCell key={cellIndex} className="text-gray-700">
-  //                         {entry[field as keyof EntryData] != null
-  //                           ? String(entry[field as keyof EntryData])
-  //                           : ' '}
-  //                       </TableCell>
-  //                     );
-  //                   })}
-  //                 </TableRow>
-  //               ))}
-  //             </TableBody>
-  //           </Table>
-  //         </div>
-  //       </CardContent>
-  //     </Card>
-  //     <div className="fixed bottom-4 left-0 right-0 flex justify-center items-center z-10">
-  //       <div className="flex items-center bg-white rounded-full shadow-sm px-2 py-1">
-  //         <Button
-  //           onClick={prevPage}
-  //           disabled={isPrevDisabled}
-  //           variant="pagination"
-  //           size="sm"
-  //           className="rounded-l-full transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
-  //         >
-  //           &lt;
-  //         </Button>
-  //         <span className="px-3 text-xs font-medium text-gray-600">
-  //           {isSearchActive
-  //             ? 'Search Results'
-  //             : `${metadata.currentPage}/${metadata.totalPages || 1}`}
-  //         </span>
-  //         <Button
-  //           onClick={nextPage}
-  //           disabled={isNextDisabled}
-  //           variant="pagination"
-  //           size="sm"
-  //           className="rounded-r-full transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
-  //         >
-  //           &gt;
-  //         </Button>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-
   return (
     <div className="relative w-full max-w-full overflow-hidden pb-16 animate-fade-in-up">
       <style jsx global>{`
@@ -2193,7 +1863,7 @@ const MonthDetail: React.FC = () => {
         }
       `}</style>
       <Card className="mb-16">
-        <CardHeader className="flex flex-col space-y-4">
+        <CardHeader className="flex flex-col -space-y-2">
           {/* Heading and Details Section */}
           <div>
             <CardTitle>Details for {month}</CardTitle>
@@ -2397,20 +2067,20 @@ const MonthDetail: React.FC = () => {
                 </Dialog.Portal>
               </Dialog.Root>
 
-              <Button
+              {/* <Button
                 onClick={handleReset}
                 className="bg-red-500 hover:bg-red-600 text-white transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
                 disabled={isLoading || isInitialLoad}
               >
                 Reset All
+              </Button> */}
+              <Button
+                onClick={handleReset}
+                className="bg-red-500 hover:bg-red-600 text-white transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
+                disabled={isLoading || isInitialLoad}
+              >
+                <RiCloseCircleLine className="h-6 w-6 text-white" />
               </Button>
-              {/* <Button
-  onClick={handleReset}
-  className="bg-red-500 hover:bg-red-600 text-white transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105"
-  disabled={isLoading || isInitialLoad}
->
-  <XIcon className="h-6 w-6 text-white" />
-</Button> */}
             </div>
           </div>
         </CardHeader>
